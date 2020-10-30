@@ -61,6 +61,7 @@ final class NodeTypesStatisticsCommand extends AbstractCommand
         $allNodeTypes = array_keys($robotLoader->getIndexedClasses());
         $unusedNodeTypes = array_diff($allNodeTypes, $uniqueNodeTypes);
 
+        // explicitly,
         $this->symfonyStyle->listing($unusedNodeTypes);
         // @todo - print nodes that are not used at all
 
