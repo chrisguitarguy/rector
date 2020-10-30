@@ -29,7 +29,7 @@ final class RectorsFinder
      */
     public function findCoreRectorClasses(): array
     {
-        $allRectors = $this->findAndCreateCoreRectors();
+        $allRectors = $this->findInDirectoriesAndCreate(self::RECTOR_PATHS);
 
         $rectorClasses = array_map(function (RectorInterface $rector): string {
             return get_class($rector);

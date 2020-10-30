@@ -68,6 +68,7 @@ final class NodeTypesStatisticsCommand extends AbstractCommand
 
     /**
      * @param PhpRectorInterface[] $phpRectors
+     * @return string[]
      */
     private function collectNodeTypesFromGetNodeTypes(array $phpRectors): array
     {
