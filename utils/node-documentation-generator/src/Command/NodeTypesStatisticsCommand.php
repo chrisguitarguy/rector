@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rector\Utils\NodeDocumentationGenerator\Command;
 
+use Nette\Loaders\RobotLoader;
 use Rector\Core\Console\Command\AbstractCommand;
 use Rector\Core\Contract\Rector\PhpRectorInterface;
 use Rector\Core\Testing\Finder\RectorsFinder;
@@ -41,15 +42,27 @@ final class NodeTypesStatisticsCommand extends AbstractCommand
         $nodeTypesCount = $this->resolveNodeTypesByCount($nodeTypes);
         $this->printMostUsedNodeTypesTable($nodeTypesCount);
 
-        $uniqueNodeTypes = count(array_unique($nodeTypes));
+        $uniqueNodeTypes = array_unique($nodeTypes);
+        $uniqueNodeTypesCount = count($uniqueNodeTypes);
         $message = sprintf(
             'In total, %d Rectors listens to %d node types - with only %d unique types',
             count($phpRectors),
             count($nodeTypes),
-            $uniqueNodeTypes
+            $uniqueNodeTypesCount
         );
 
         $this->symfonyStyle->success($message);
+
+        $robotLoader= new RobotLoader();
+        $robotLoader->setTempDirectory(sys_get_temp_dir() . '/nodes');
+        $robotLoader->addDirectory(__DIR__ . '/../../../../vendor/nikic/php-parser/lib/PhpParser/Node');
+        $robotLoader->rebuild();
+
+        $allNodeTypes = array_keys($robotLoader->getIndexedClasses());
+        $unusedNodeTypes = array_diff($allNodeTypes, $uniqueNodeTypes);
+
+        $this->symfonyStyle->listing($unusedNodeTypes);
+        // @todo - print nodes that are not used at all
 
         return ShellCode::SUCCESS;
     }
